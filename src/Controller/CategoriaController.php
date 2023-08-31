@@ -51,7 +51,7 @@ class CategoriaController extends AbstractController
             $categoria = new Categoria();
             $categoria->setNome($data['nome']);
             $categoriaRepository->add($categoria,true);
-            return $this->json($categoria,200);
+            return $this->json($categoria,201);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
