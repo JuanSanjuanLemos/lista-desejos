@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\ProdutoRepository;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -14,40 +17,53 @@ class Produto
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("list_produto")
      */
     private $id;
-
+    
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("list_produto")
      */
     private $nome;
-
+    
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("list_produto")
      */
     private $link;
-
+    
     /**
      * @ORM\Column(type="float")
+     * @Groups("list_produto")
      */
     private $valor;
-
+    
     /**
      * @ORM\Column(type="boolean")
+     * @Groups("list_produto")
      */
     private $isAdquirido;
-
+    
     /**
      * @ORM\ManyToOne(targetEntity=Categoria::class, inversedBy="produtos")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("list_produto")
      */
     private $categoria;
-
+    
     /**
-     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="produtos")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("list_produto")
      */
     private $usuario;
+
+    public function __construct()
+    {
+        $this->setIsAdquirido(false);
+
+    }
 
     public function getId(): ?int
     {
@@ -110,7 +126,6 @@ class Produto
     public function setCategoria(?Categoria $categoria): self
     {
         $this->categoria = $categoria;
-
         return $this;
     }
 

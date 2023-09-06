@@ -19,7 +19,7 @@ class UserController extends AbstractController
     {
         try {
             $data = $userRepository->findAll();
-            return $this->json($data,200);
+            return $this->json($data,200,[],["groups" => ["list_user"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
@@ -58,7 +58,7 @@ class UserController extends AbstractController
             $user->setPassword($data['password']);
             $userRepository->add($user,true);
 
-            return $this->json($user,201);
+            return $this->json($user,201,[],["groups" => ["list_user"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }

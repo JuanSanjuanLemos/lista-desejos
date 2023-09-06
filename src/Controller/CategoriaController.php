@@ -19,7 +19,7 @@ class CategoriaController extends AbstractController
     {
         try {
             $data = $categoriaRepository->findAll();
-            return $this->json($data,200);
+            return $this->json($data,200,[],["groups" => ["list_categoria"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
@@ -35,7 +35,7 @@ class CategoriaController extends AbstractController
             if (!$data) {
                 throw new Exception("Categoria não encontrada!", 404);
             }
-            return $this->json($data,200);
+            return $this->json($data,200,[],["groups" => ["list_categoria"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
@@ -51,7 +51,7 @@ class CategoriaController extends AbstractController
             $categoria = new Categoria();
             $categoria->setNome($data['nome']);
             $categoriaRepository->add($categoria,true);
-            return $this->json($categoria,201);
+            return $this->json($categoria,201, [],["groups" => ["list_categoria"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
@@ -70,7 +70,7 @@ class CategoriaController extends AbstractController
             }
             $categoria->setNome($data['nome']);
             $categoriaRepository->add($categoria,true);
-            return $this->json($categoria,200);
+            return $this->json($categoria,200,[],["groups" => ["list_categoria"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
