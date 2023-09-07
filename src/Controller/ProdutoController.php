@@ -53,19 +53,19 @@ class ProdutoController extends AbstractController
         try {
             $data = $request->request->all();
             $produto = new Produto();
+            $this->verifyIsSetAndIsNull(['nome','link','valor','categoria'],$data);
             $user = $security->getUser();
-            if ($user) {
-                $this->verifyIsSetAndIsNull(['nome','link','valor','categoria'],$data);
-                $produto->setUsuario($user);
-                $produto->setNome($data['nome']);
-                $produto->setLink($data['link']);
-                $produto->setValor($data['valor']);
-                $categoria = $categoriaRepository->find($data['categoria']);
-                $produto->setCategoria($categoria);
-                $produtoRepository->add($produto, true);
-                return $this->json($produto, 201, [], ["groups" => ["list_produto", "list_categoria", "list_user"]]);
+            $produto->setUsuario($user);
+            $produto->setNome($data['nome']);
+            $produto->setLink($data['link']);
+            $produto->setValor($data['valor']);
+            $categoria = $categoriaRepository->findOneBy(["id"=>$data['categoria'], "usuario"=>$user]);
+            if (!$categoria){
+                throw new Exception("Categoria não encontrada!", 404);
             }
-            throw new Exception("Nenhum usuário logado");
+            $produto->setCategoria($categoria);
+            $produtoRepository->add($produto, true);
+            return $this->json($produto, 201, [], ["groups" => ["list_produto", "list_categoria", "list_user"]]);
         } catch (Exception $e) {
             return $this->json(array('error' => $e->getMessage()));
         }
@@ -115,10 +115,10 @@ class ProdutoController extends AbstractController
             $user = $security->getUser();
             $data = $produtoRepository->findOneBy(['id' => $id, "usuario" => $user]);
             if (!$data) {
-                throw new Exception("Categoria não encontrada!", 404);
+                throw new Exception("Produto não encontrado!", 404);
             }
             $produtoRepository->remove($data, true);
-            return $this->json("Categoria removida com sucesso!", 204);
+            return $this->json("Produto removido com sucesso!", 204);
         } catch (Exception $e) {
             return $this->json(array('error' => $e->getMessage()));
         }

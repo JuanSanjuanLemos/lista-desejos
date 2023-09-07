@@ -35,7 +35,7 @@ class UserController extends AbstractController
             if (!$data) {
                 throw new Exception("Usuário não encontrado!", 404);
             }
-            return $this->json($data,200);
+            return $this->json($data,200,[],["groups" => ["list_user"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
@@ -53,9 +53,11 @@ class UserController extends AbstractController
                 throw new Exception("Email já cadastrado!",400);
             }
             $user = new User();
-
             $user->setEmail($data['email']);
             $user->setPassword($data['password']);
+            if(isset($data['roles'])){
+                $user->setRoles($data['roles']);
+            }
             $userRepository->add($user,true);
 
             return $this->json($user,201,[],["groups" => ["list_user"]]);
@@ -88,7 +90,7 @@ class UserController extends AbstractController
             }
             $userRepository->add($user,true);
 
-            return $this->json($user,201);
+            return $this->json($user,200,[],["groups" => ["list_user"]]);
         } catch (Exception $e) {
             return $this->json(array('error' =>$e->getMessage()));
         }
