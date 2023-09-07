@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Categoria;
 use App\Repository\CategoriaRepository;
 use App\Utils\TreatRequest;
+use App\Utils\VerifyParams;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -53,6 +54,7 @@ class CategoriaController extends AbstractController
         try {
             $data = TreatRequest::getDataRequest($request);
             $categoria = new Categoria();
+            VerifyParams::verifyIsSet(['nome'], $data);
             $user = $security->getUser();
             $categoria->setUsuario($user);
             $categoria->setNome($data['nome']);

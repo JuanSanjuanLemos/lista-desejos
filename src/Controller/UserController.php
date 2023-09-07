@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Utils\TreatRequest;
-use App\Utils\TreatRequestRequest;
+use App\Utils\VerifyParams;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,6 +54,7 @@ class UserController extends AbstractController
             if($userRepository->findOneBy(['email' => $data['email']])) {
                 throw new Exception("Email já cadastrado!",400);
             }
+            VerifyParams::verifyIsSet(['email','password'], $data);
             $user = new User();
             $user->setEmail($data['email']);
             $user->setPassword($data['password']);

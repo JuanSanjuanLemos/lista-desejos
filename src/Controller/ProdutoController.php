@@ -6,6 +6,7 @@ use App\Entity\Produto;
 use App\Repository\CategoriaRepository;
 use App\Repository\ProdutoRepository;
 use App\Utils\TreatRequest;
+use App\Utils\VerifyParams;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,7 +55,7 @@ class ProdutoController extends AbstractController
         try {
             $data = TreatRequest::getDataRequest($request);
             $produto = new Produto();
-            $this->verifyIsSetAndIsNull(['nome','link','valor','categoria'],$data);
+            VerifyParams::verifyIsSet(['nome','link','valor','categoria'],$data);
             $user = $security->getUser();
             $produto->setUsuario($user);
             $produto->setNome($data['nome']);
@@ -125,12 +126,5 @@ class ProdutoController extends AbstractController
         }
     }
 
-    public function verifyIsSetAndIsNull($array = array(), $data = array())
-    {
-        foreach ($array as $value) {
-            if (!array_key_exists($value, $data)) {
-                throw new \InvalidArgumentException("Valores inválidos!");
-            }
-        }
-    }
+    
 }
