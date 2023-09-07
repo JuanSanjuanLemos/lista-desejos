@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Utils\TreatRequest;
+use App\Utils\TreatRequestRequest;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -47,7 +49,7 @@ class UserController extends AbstractController
     public function create(Request $request, UserRepository $userRepository): JsonResponse
     {
         try {
-            $data = $request->request->all();
+            $data = TreatRequest::getDataRequest($request);
 
             if($userRepository->findOneBy(['email' => $data['email']])) {
                 throw new Exception("Email já cadastrado!",400);
@@ -72,7 +74,7 @@ class UserController extends AbstractController
     public function update($id, Request $request, UserRepository $userRepository): JsonResponse
     {
         try {
-            $data = $request->request->all();
+            $data = TreatRequest::getDataRequest($request);
             $user = $userRepository->find($id);
             
             if (!$user) {

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Categoria;
 use App\Repository\CategoriaRepository;
+use App\Utils\TreatRequest;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -50,7 +51,7 @@ class CategoriaController extends AbstractController
     public function create(Request $request,CategoriaRepository $categoriaRepository, Security $security): JsonResponse
     {
         try {
-            $data = $request->request->all();
+            $data = TreatRequest::getDataRequest($request);
             $categoria = new Categoria();
             $user = $security->getUser();
             $categoria->setUsuario($user);
@@ -68,7 +69,7 @@ class CategoriaController extends AbstractController
     public function update($id, Request $request,CategoriaRepository $categoriaRepository, Security $security): JsonResponse
     {
         try {
-            $data = $request->request->all();
+            $data = TreatRequest::getDataRequest($request);
             $user = $security->getUser();
             $categoria = $categoriaRepository->findOneBy(['id' => $id, "usuario" => $user]);
             if (!$categoria) {

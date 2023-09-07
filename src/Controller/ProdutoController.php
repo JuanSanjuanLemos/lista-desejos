@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Produto;
 use App\Repository\CategoriaRepository;
 use App\Repository\ProdutoRepository;
+use App\Utils\TreatRequest;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -51,7 +52,7 @@ class ProdutoController extends AbstractController
     public function create(Request $request, CategoriaRepository $categoriaRepository, ProdutoRepository $produtoRepository, Security $security): JsonResponse
     {
         try {
-            $data = $request->request->all();
+            $data = TreatRequest::getDataRequest($request);
             $produto = new Produto();
             $this->verifyIsSetAndIsNull(['nome','link','valor','categoria'],$data);
             $user = $security->getUser();
@@ -77,7 +78,7 @@ class ProdutoController extends AbstractController
     public function update($id, Request $request, CategoriaRepository $categoriaRepository, ProdutoRepository $produtoRepository, Security $security): JsonResponse
     {
         try {
-            $data = $request->request->all();
+            $data = TreatRequest::getDataRequest($request);
             $user = $security->getUser();
             $produto = $produtoRepository->findOneBy(['id' => $id, "usuario" => $user]);
             if (!$produto) {
