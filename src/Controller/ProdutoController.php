@@ -19,11 +19,15 @@ class ProdutoController extends AbstractController
     /**
      * @Route("/produtos", name="list_produtos", methods={"GET"})
      */
-    public function list(ProdutoRepository $produtoRepository, Security $security): JsonResponse
+    public function list(Request $request, ProdutoRepository $produtoRepository, Security $security): JsonResponse
     {
         try {
             $user = $security->getUser();
-            $data = $produtoRepository->findBy(['usuario' => $user]);
+            $isAdquirido = null;
+            if($request->query->get("isAdquirido")){
+                $isAdquirido = $request->query->get("isAdquirido");
+            }
+            $data = $produtoRepository->listAllWhere($user,$isAdquirido);
             return $this->json($data, 200, [], ["groups" => ["list_produto", "list_categoria", "list_user"]]);
         } catch (Exception $e) {
             return $this->json(array('error' => $e->getMessage()));
@@ -82,6 +86,7 @@ class ProdutoController extends AbstractController
             $data = TreatRequest::getDataRequest($request);
             $user = $security->getUser();
             $produto = $produtoRepository->findOneBy(['id' => $id, "usuario" => $user]);
+            $produto->setUpdatedAt(new \DateTime());
             if (!$produto) {
                 throw new Exception("Produto não encontrada!", 404);
             }

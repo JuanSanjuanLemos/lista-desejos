@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProdutoRepository;
+use DateTime;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -59,10 +60,23 @@ class Produto
      */
     private $usuario;
 
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups("list_produto")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("list_produto")
+     */
+    private $updatedAt;
+
     public function __construct()
     {
         $this->setIsAdquirido(false);
-
+        $this->setUpdatedAt(new DateTime());
+        $this->setCreatedAt(new DateTime());
     }
 
     public function getId(): ?int
@@ -137,6 +151,30 @@ class Produto
     public function setUsuario(User $usuario): self
     {
         $this->usuario = $usuario;
+
+        return $this;
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt($createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

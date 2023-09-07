@@ -1,11 +1,5 @@
 <?php
 
-//CRIAR UM METÓDO PARA LISTAR COM FILTRO PASSADO POR PARAMS
-//MONTAR QUERYBUILDER
-//SERA PASSADO DO CRONTROLLER POR ARRAY
-
-
-
 namespace App\Repository;
 
 use App\Entity\Produto;
@@ -34,6 +28,21 @@ class ProdutoRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function listAllWhere($usuario, $isAdquirido=null){
+        $qb = $this->createQueryBuilder("p")
+            ->where("p.usuario = :usuario")
+            ->setParameter("usuario", $usuario)
+            ->orderBy("p.updatedAt", "DESC")
+            ->addOrderBy("p.createdAt", "DESC")
+            ->addOrderBy("p.nome", "ASC");
+
+        if(!is_null($isAdquirido)){
+            $qb->andWhere("p.isAdquirido = :isAdquirido");
+            $qb->setParameter("isAdquirido", $isAdquirido);
+        }
+        return $qb->getQuery()->execute();
     }
 
     public function remove(Produto $entity, bool $flush = false): void
