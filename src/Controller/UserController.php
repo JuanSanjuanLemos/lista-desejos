@@ -10,6 +10,7 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
@@ -46,7 +47,7 @@ class UserController extends AbstractController
     /**
      * @Route("/cadastrar-usuario", name="create_users", methods={"POST"})
      */
-    public function create(Request $request, UserRepository $userRepository): JsonResponse
+    public function create(Request $request, UserRepository $userRepository,UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         try {
             $data = TreatRequest::getDataRequest($request);
@@ -57,7 +58,7 @@ class UserController extends AbstractController
             VerifyParams::verifyIsSet(['email','password'], $data);
             $user = new User();
             $user->setEmail($data['email']);
-            $user->setPassword($data['password']);
+            $user->setPassword($data['password'], $passwordHasher);
             if(isset($data['roles'])){
                 $user->setRoles($data['roles']);
             }
@@ -72,7 +73,7 @@ class UserController extends AbstractController
     /**
      * @Route("/usuarios/{id}", name="update_users", methods={"PUT","PATCH"})
      */
-    public function update($id, Request $request, UserRepository $userRepository): JsonResponse
+    public function update($id, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         try {
             $data = TreatRequest::getDataRequest($request);
@@ -89,7 +90,7 @@ class UserController extends AbstractController
                 $user->setEmail($data['email']);
             }
             if(isset($data['password'])) {
-                $user->setPassword($data['password']);
+                $user->setPassword($data['password'], $passwordHasher);
             }
             $userRepository->add($user,true);
 
