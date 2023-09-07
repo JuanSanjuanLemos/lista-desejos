@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
 
 class UserController extends AbstractController
 {
@@ -31,9 +32,12 @@ class UserController extends AbstractController
     /**
      * @Route("/usuarios/{id}", name="find_users", methods={"GET"})
      */
-    public function find($id, UserRepository $userRepository): JsonResponse
+    public function find($id, UserRepository $userRepository, Security $security): JsonResponse
     {
         try {
+            $user = $security->getUser();
+            $userRepository->verifyIdUser($id, $user);
+            
             $data = $userRepository->find($id);
             if (!$data) {
                 throw new Exception("Usuário não encontrado!", 404);
@@ -73,10 +77,13 @@ class UserController extends AbstractController
     /**
      * @Route("/usuarios/{id}", name="update_users", methods={"PUT","PATCH"})
      */
-    public function update($id, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function update($id, Security $security, Request $request, UserRepository $userRepository, UserPasswordHasherInterface $passwordHasher): JsonResponse
     {
         try {
             $data = TreatRequest::getDataRequest($request);
+            $user = $security->getUser();
+            $userRepository->verifyIdUser($id, $user);
+
             $user = $userRepository->find($id);
             
             if (!$user) {
@@ -92,6 +99,9 @@ class UserController extends AbstractController
             if(isset($data['password'])) {
                 $user->setPassword($data['password'], $passwordHasher);
             }
+            if(isset($data['roles'])){
+                $user->setRoles($data['roles']);
+            }
             $userRepository->add($user,true);
 
             return $this->json($user,200,[],["groups" => ["list_user"]]);
@@ -103,9 +113,11 @@ class UserController extends AbstractController
     /**
      * @Route("/usuarios/{id}", name="delete_users", methods={"DELETE"})
      */
-    public function delete($id, UserRepository $userRepository): JsonResponse
+    public function delete($id, Security $security, UserRepository $userRepository): JsonResponse
     {
         try {
+            $user = $security->getUser();
+            $userRepository->verifyIdUser($id, $user);
             $data = $userRepository->find($id);
             if (!$data) {
                 throw new Exception("Usuário não encontrado!", 404);

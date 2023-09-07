@@ -49,6 +49,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $produtos;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Categoria", mappedBy="usuario", cascade={"remove"})
+     */
+    private $categorias;
+
     function __construct()
     {
         $this->setRoles(["ROLE_USER"]);

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Produto;
 use App\Repository\CategoriaRepository;
 use App\Repository\ProdutoRepository;
+use App\Repository\UserRepository;
 use App\Utils\TreatRequest;
 use App\Utils\VerifyParams;
 use Exception;
@@ -24,7 +25,7 @@ class ProdutoController extends AbstractController
         try {
             $user = $security->getUser();
             $isAdquirido = null;
-            if($request->query->get("isAdquirido")){
+            if(!is_null($request->query->get("isAdquirido"))){
                 $isAdquirido = $request->query->get("isAdquirido");
             }
             $data = $produtoRepository->listAllWhere($user,$isAdquirido);
@@ -86,10 +87,10 @@ class ProdutoController extends AbstractController
             $data = TreatRequest::getDataRequest($request);
             $user = $security->getUser();
             $produto = $produtoRepository->findOneBy(['id' => $id, "usuario" => $user]);
-            $produto->setUpdatedAt(new \DateTime());
             if (!$produto) {
                 throw new Exception("Produto não encontrada!", 404);
             }
+            $produto->setUpdatedAt(new \DateTime());
             if(isset($data['nome'])){
                 $produto->setNome($data['nome']);
             }

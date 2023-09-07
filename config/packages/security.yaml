@@ -46,8 +46,8 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/api/produtos, roles: ROLE_USER }
         - { path: ^/api/categorias, roles: ROLE_USER }
-        - { path: ^/api/usuarios, roles: ROLE_ADMIN }
         - { path: ^/api/usuarios/\d+, roles: ROLE_USER }
+        - { path: ^/api/usuarios, roles: ROLE_ADMIN }
 when@test:
     security:
         password_hashers:

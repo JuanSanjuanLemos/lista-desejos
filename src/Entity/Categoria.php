@@ -27,15 +27,16 @@ class Categoria
   private $nome;
 
   /**
-   * @ORM\OneToMany(targetEntity=Produto::class, mappedBy="categoria")
+   * @ORM\OneToMany(targetEntity=Produto::class, mappedBy="categoria", cascade={"remove"})
    */
   private $produtos;
 
   /**
-   * @Groups("list_categoria")
-   * @ORM\ManyToOne(targetEntity=User::class)
+   * @ORM\ManyToOne(targetEntity="User", inversedBy="categorias")
+   * @ORM\JoinColumn(name="usuario_id", referencedColumnName="id")
    */
   private $usuario;
+
 
   public function __construct()
   {

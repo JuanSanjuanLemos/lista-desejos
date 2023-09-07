@@ -42,6 +42,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         }
     }
 
+    static public function verifyIdUser($id, $user)
+    {
+        if(!in_array("ROLE_ADMIN",$user->getRoles())){
+            if($user->getId()!=$id) {
+                throw new \Exception('Esse usuário não pertence ao usuário logado.');
+            }   
+        }
+    }
+
     /**
      * Used to upgrade (rehash) the user's password automatically over time.
      */
@@ -51,10 +60,11 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
         }
 
-        $user->setPassword($newHashedPassword);
 
         $this->add($user, true);
     }
+
+
 
 //    /**
 //     * @return User[] Returns an array of User objects
